@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>扫码登录</title>
+<meta charset="utf-8"/>
+<script src="/qrlogin/public/js/qrcode.js"></script>
+<script src="/qrlogin/public/js/jquery.js"></script>
+<style>
+body {
+    font-family: "Microsoft Yahei";
+    color: #fff;
+    background: 0 0;
+    padding: 100px 300px 50px 500px;
+    background-color: rgb(51, 51, 51);
+}
+#qrcode{            
+    border: 2px solid #E2E2E2;
+    text-align: center;
+    background-color: #fff;         
+    margin:auto;
+    padding: 15px;
+    display: table-cell;
+    vertical-align:middle;
+
+}
+#tip{
+    width: 310px;
+    margin-top: 15px;
+    background-color: #232323;
+    border-radius: 100px;
+    -moz-border-radius: 100px;
+    -webkit-border-radius: 100px;
+    box-shadow: inset 0 5px 10px -5px #191919,0 1px 0 0 #444;
+    -moz-box-shadow: inset 0 5px 10px -5px #191919,0 1px 0 0 #444;
+    -webkit-box-shadow: inset 0 5px 10px -5px #191919,0 1px 0 0 #444;
+}
+#tip p{
+    text-align: center;
+    display: block;
+}
+</style>
+</head>
+<body>
+<div id="qrcode"></div>
+<div id="tip">
+    <p>请使用App扫描二维码登录</p>
+    <p>“xx网”</p>
+</div>
+
+<script>
+var host = "http://" + location.host+ "/qrlogin";
+var channel_id = {{.ChanId}};
+var redirect_url = {{.RedirectUrl}};
+var token;
+
+$(function() {	
+    var qrcode = new QRCode(document.getElementById("qrcode"), {
+        width : 280,
+        height : 280
+    });  
+    qrcode.makeCode(host+"/login?channel_id="+channel_id);        
+    checkLogin();
+});
+
+function checkLogin(){
+    $.get(host+'/check?channel_id='+channel_id, function (result){
+        if (result.code == 0){
+            // success
+            token = result.data
+            return confirmLogin();
+        }
+        checkLogin();
+    }, 'json');     
+}
+
+function confirmLogin(){
+    $.get(host+'/confirm?channel_id='+channel_id, function (result){
+        if (result.code == 0){
+            // success
+            location.href = redirect_url+"?access_token="+token;                
+        }
+    }, 'json'); 
+}
+</script>
+</body>
+</html>
