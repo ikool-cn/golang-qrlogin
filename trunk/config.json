@@ -1,6 +1,5 @@
 {	
 	"listen": ":8090",
 	"timeout": 30,
-	"redirect_url":"http://www.abc.com/",	
-	"create_organization_url": "http://api.abc.com/v1/created_organizations"
+	"redirect_url":"http://www.abc.com/"
 }
